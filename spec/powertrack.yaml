@@ -67,7 +67,7 @@ paths:
     delete:
       summary: Deletes a single power record
       parameters:
-        - name: id
+        - name: record-id
           in: path
           description: ID of the power record that is to be deleted
           required: true

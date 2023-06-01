@@ -100,42 +100,11 @@ app.get('/records', (req, res) => {
       res.json({ success: true });
     });
   });
+  app.delete('/records/:record-id', (req, res) => {
+    const recordId = req.params.record-id;
   
-  app.listen(3000, () => {
-    console.log('Server listening on port 3000');
-  });
-  app.get('/records/:id', (req, res) => {
-    const recordId = req.params.id;
-  
-    fs.readFile('src/records.json', 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
-        return;
-      }
-  
-      try {
-        const records = JSON.parse(data);
-        const record = records.find((rec) => rec.id === recordId);
-  
-        if (!record) {
-          res.status(404).json({ error: 'Datensatz nicht gefunden' });
-          return;
-        }
-  
-        res.json(record);
-      } catch (parseError) {
-        console.error(parseError);
-        res.status(500).json({ error: 'Error parsing JSON' });
-      }
-    });
-  });
-  
-  app.delete('/records/:id', (req, res) => {
-    const recordId = req.params.id;
-
     console.log(recordId);
-  
+
     fs.readFile('src/records.json', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
@@ -145,20 +114,19 @@ app.get('/records', (req, res) => {
   
       try {
         let records = JSON.parse(data);
-
-        console.log(records);
-
-        const recordIndex = records.findIndex((rec) => rec.id == recordId);
-        
-        console.log(recordIndex);
-
-        if (recordIndex === -1) {
-          res.status(404).json({ error: 'Datensatz nicht gefunden' });
+  
+        // Find the index of the record with the given ID
+        const index = records.findIndex(record => record.id === recordId);
+  
+        if (index === -1) {
+          res.status(404).json({ error: 'Record not found' });
           return;
         }
   
-        records.splice(recordIndex, 1);
+        // Remove the record from the array
+        records.splice(index, 1);
   
+        // Write the updated records back to the file
         fs.writeFile('src/records.json', JSON.stringify(records), 'utf8', (err) => {
           if (err) {
             console.error(err);
@@ -167,7 +135,6 @@ app.get('/records', (req, res) => {
           }
   
           res.json({ success: true });
-          res.send();
         });
       } catch (parseError) {
         console.error(parseError);
@@ -175,4 +142,3 @@ app.get('/records', (req, res) => {
       }
     });
   });
-  
