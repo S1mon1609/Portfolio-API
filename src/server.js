@@ -27,3 +27,19 @@ function validateRecord(record) {
         record.date && typeof record.date === "string" && dateRegex.test(record.date) &&
         record.reading && typeof record.reading === "number";
 }
+
+function readRecordsFromFile(){
+  try {
+      const data = fs.readFileSync('src/records.json', 'utf-8');
+      return JSON.parse(data);
+  } catch (err) {
+      console.error('Error reading records from file:', err);
+      return {};
+  }
+}
+
+app.get("/records", res, req =>{
+  console.log("Get-Function")
+  const items = readRecordsFromFile
+  res.status(200).json(items)
+});
