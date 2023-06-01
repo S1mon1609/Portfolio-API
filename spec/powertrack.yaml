@@ -72,7 +72,7 @@ paths:
           description: ID of the power record that is to be deleted
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         204:
           description: Power record deleted successfully.
