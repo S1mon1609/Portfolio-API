@@ -43,13 +43,13 @@ paths:
         500:
           description: Internal server error.
 
-  /records/{record-id}:
+  /records/{id}:
     get:
       summary: Returns a specific record.
       parameters:
         - in: path
           required: true
-          name: record-id
+          name: id
           description: ID of the power record to retrieve.
           schema:
             type: string
@@ -67,7 +67,7 @@ paths:
     delete:
       summary: Deletes a single power record
       parameters:
-        - name: record-id
+        - name: id
           in: path
           description: ID of the power record that is to be deleted
           required: true
