@@ -90,18 +90,23 @@ app.get('/records', (req, res) => {
   });
   
   app.delete('/records', (req, res) => {
-    fs.writeFile('src/records.json', JSON.stringify([]), 'utf8', (err) => {
+
+    const emptyRecord = {items: []} 
+
+    fs.writeFile('src/records.json', JSON.stringify(emptyRecord), 'utf8', (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
         return;
       }
+      
+      res.status(204).send();
   
-      res.json({ success: true });
+    
     });
   });
   app.delete('/records/:record-id', (req, res) => {
-    const recordId = req.params.record-id;
+    const { recordId } = req.params;
   
     console.log(recordId);
 
@@ -115,27 +120,12 @@ app.get('/records', (req, res) => {
       try {
         let records = JSON.parse(data);
   
-        // Find the index of the record with the given ID
-        const index = records.findIndex(record => record.id === recordId);
-  
-        if (index === -1) {
-          res.status(404).json({ error: 'Record not found' });
-          return;
-        }
-  
-        // Remove the record from the array
-        records.splice(index, 1);
-  
-        // Write the updated records back to the file
-        fs.writeFile('src/records.json', JSON.stringify(records), 'utf8', (err) => {
-          if (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal Server Error' });
-            return;
-          }
+        if (records.items.find(item => item.id === recordId)) {
+          records.items = records.items.filter(item => item.id !== recordId);
+          saveRecordsToFile(records);
   
           res.json({ success: true });
-        });
+        };
       } catch (parseError) {
         console.error(parseError);
         res.status(500).json({ error: 'Error parsing JSON' });
