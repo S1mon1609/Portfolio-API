@@ -60,32 +60,25 @@ app.get('/records', (req, res) => {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
         return;
-      }
+      } else {
+        const jsonData = JSON.parse(data);
+        let newItem = req.body;
+        const id = generateId()
+        newItem.id = id;
   
-      try {
-        const existingRecords = JSON.parse(data);
+        jsonData.items.push(newRecord);
   
-        const id = generateId();
-  
-        newRecord.id = id;
-  
-        const recordsArray = Array.isArray(existingRecords) ? existingRecords : [existingRecords];
-  
-        recordsArray.push(newRecord);
-  
-        fs.writeFile('src/records.json', JSON.stringify(recordsArray), 'utf8', (err) => {
+        fs.writeFile('src/records.json', JSON.stringify(jsonData, null, 2), 'utf8', (err) => {
           if (err) {
             console.error(err);
             res.status(500).json({ error: 'Internal Server Error' });
             return;
+          } else {
+            const header = getRecordUrl(req, id);
+            res.status(201).location(header).json({ success: true });
           }
-  
-          const header = getRecordUrl(req, id);
-          res.status(201).location(header).json({ success: true });
         });
-      } catch (parseError) {
-        console.error(parseError);
-        res.status(500).json({ error: 'Error parsing JSON' });
+
       }
     });
   });
@@ -94,7 +87,7 @@ app.get('/records', (req, res) => {
 
     const emptyRecord = {items: []} 
 
-    fs.writeFile('src/records.json', JSON.stringify(emptyRecord), 'utf8', (err) => {
+    fs.writeFile('src/records.json', JSON.stringify(emptyRecord, null, 2), 'utf8', (err) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -136,24 +129,27 @@ app.delete('/records/:id', (req, res) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: 'Server-Fehler.' });
-    }
+    } else {
   
-  const items = JSON.parse(data).items;
+    let jsonData = JSON.parse(data);
 
-  const item = items.findIndex(item => item.id === id)
+    console.log(jsonData);
+    console.log(id);
 
-    if (item !== -1) {
-      items.splice(item, 1);
-      data.items = items
-      fs.writeFile('src/records.json', JSON.stringify(data), 'utf8', err => { 
+    const index = jsonData.items.findIndex(item => item.id === id);
+
+    if (index !== -1) {
+      jsonData.items.splice(index, 1);
+      fs.writeFile('src/records.json', JSON.stringify(jsonData, null, 2), 'utf8', err => {
         if (err) {
-          res.status(500).json({ error: 'Server-Fehler.' });
+          res.status(500).send('Error writing to file');
         } else {
           res.status(204).send("Power record deleted successfully.");
         }
       });
     } else {
-      res.status(404).json('The power record with the given ID does not exist.')
+      res.status(404).send("The power record with the given ID does not exist.");
     }
-  });
-}); 
+  }
+});
+});
