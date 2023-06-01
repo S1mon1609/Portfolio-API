@@ -1,14 +1,9 @@
 {
   "items": [
     {
-      "date": "2023-01-28",
-      "reading": 234.13,
-      "id": "fbb616ce-975c-4061-bc41-3ba68cb3fcce"
-    },
-    {
       "date": "2023-02-28",
       "reading": 234.13,
-      "id": "c68e3073-a3e2-460a-9bb1-711f098246f5"
+      "id": "ed4db4b3-abe0-4aef-bfce-00d6da32a043"
     }
   ]
 }
