@@ -38,7 +38,7 @@ function readRecordsFromFile(){
   }
 }
 
-app.get("/records", res, req =>{
+app.get("src/records", req, res =>{
   console.log("Get-Function")
   const items = readRecordsFromFile
   res.status(200).json(items)
