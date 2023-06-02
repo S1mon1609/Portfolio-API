@@ -132,9 +132,6 @@ app.delete('/records/:id', (req, res) => {
   
     let jsonData = JSON.parse(data);
 
-    console.log(jsonData);
-    console.log(id);
-
     const index = jsonData.items.findIndex(item => item.id === id);
 
     if (index !== -1) {
