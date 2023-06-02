@@ -32,17 +32,16 @@ app.get('/records', (req, res) => {
     fs.readFile('src/records.json', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).send();
         return;
       }
   
       try {
         const records = JSON.parse(data);
-        console.log("Yan ist ein kek");
         res.json(records);
       } catch (parseError) {
         console.error(parseError);
-        res.status(500).json({ error: 'Error parsing JSON' });
+        res.status(500).send();
       }
     });
   });
@@ -51,14 +50,14 @@ app.get('/records', (req, res) => {
     const newRecord = req.body;
   
     if (!validateRecord(newRecord)) {
-      res.status(400).json({ error: 'Ungültiger Datensatz' });
+      res.status(400).send();
       return;
     }
   
     fs.readFile('src/records.json', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).send();
         return;
       } else {
         const jsonData = JSON.parse(data);
@@ -71,11 +70,11 @@ app.get('/records', (req, res) => {
         fs.writeFile('src/records.json', JSON.stringify(jsonData, null, 2), 'utf8', (err) => {
           if (err) {
             console.error(err);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).send();
             return;
           } else {
             const header = getRecordUrl(req, id);
-            res.status(201).location(header).json({ success: true });
+            res.status(201).location(header);
           }
         });
 
@@ -94,7 +93,7 @@ app.get('/records', (req, res) => {
         return;
       }
       
-      res.status(204).send();
+      res.status(204).send("All power records deleted succesfully.");
   
     
     });
@@ -107,7 +106,7 @@ app.get('/records', (req, res) => {
     fs.readFile('src/records.json', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({ error: 'Server-Fehler.' });
+        return res.status(500).send();
       }
   
     const items = JSON.parse(data).items;
@@ -117,7 +116,7 @@ app.get('/records', (req, res) => {
     if (item) {
       res.json(item);
     } else {
-      res.status(404).json({ error: 'Datensatz nicht gefunden.' });
+      res.status(404).send();
       }
     });
   });
@@ -128,7 +127,7 @@ app.delete('/records/:id', (req, res) => {
   fs.readFile('src/records.json', 'utf8', (err, data) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Server-Fehler.' });
+      return res.status(500).send();
     } else {
   
     let jsonData = JSON.parse(data);
@@ -142,13 +141,13 @@ app.delete('/records/:id', (req, res) => {
       jsonData.items.splice(index, 1);
       fs.writeFile('src/records.json', JSON.stringify(jsonData, null, 2), 'utf8', err => {
         if (err) {
-          res.status(500).send('Error writing to file');
+          res.status(500).send();
         } else {
           res.status(204).send("Power record deleted successfully.");
         }
       });
     } else {
-      res.status(404).send("The power record with the given ID does not exist.");
+      res.status(404).send();
     }
   }
 });
