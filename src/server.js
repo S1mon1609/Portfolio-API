@@ -164,7 +164,7 @@ app.delete('/records/:id', (req, res) => {
         }
       });
     } else {
-      res.status(404).send("The power record with the given ID does not exist.");
+      res.status(404).send();
     }
   }
 });
