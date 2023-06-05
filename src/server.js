@@ -18,6 +18,7 @@ function generateId() {
     return crypto.randomUUID();
 }
 function getRecordUrl(req, recordId) {
+    console.log("Url Created")
     return `${req.protocol}://${req.header('host')}/records/${recordId}`;
 }
 
@@ -62,26 +63,31 @@ app.post('/records', (req, res) => {
   fs.readFile('src/records.json', 'utf8', (err, data) => {
     // check that file has been read successfully
     if (err) {
+      console.log("Error 1")
       console.error(err);
       res.status(500).send();
       return;
       //given record receives an id and is added to the parsed JSON document
     } else {
+      console.log("Error 2")
       const jsonData = JSON.parse(data);
-      let newItem = req.body;
+      let newRecord = req.body;
       const id = generateId()
-      newItem.id = id;
+      newRecord.id = id;
   
       jsonData.items.push(newRecord);
       
       // JSON with new record is wrote back into the json file. If stringify or write fails a 500 response is given. If it is successfull a response is given that includes a header with the received id of the new record.
       fs.writeFile('src/records.json', JSON.stringify(jsonData, null, 2), 'utf8', (err) => {
         if (err) {
+          console.log("Error 3")
           console.error(err);
           res.status(500).send();
           return;
         } else {
+          console.log("Error 4")
           const header = getRecordUrl(req, id);
+          console.log(header);
           res.status(201).location(header);
         }
       });
